@@ -23,9 +23,16 @@ headers = ["Name", "Position", "Swim time", "Swim to Bike", "Bike time", "Bike t
            "Division"]
 racingData = []
 
-#numOfPages = math.floor(int(driver.find_elements(by=By.CLASS_NAME, value="css-q4n587")[1].text.split(" ")[2])/10)
-numOfPages = 200
-# 207
+# totalPages = math.floor(int(driver.find_elements(by=By.CLASS_NAME, value="css-q4n587")[1].text.split(" ")[2])/10)
+
+
+def isCorrectEncoding(s):
+    try:
+        s.encode(encoding="utf-8").decode("ascii")
+    except UnicodeDecodeError:
+        return False
+    else:
+        return True
 
 
 def get_page_data():
@@ -44,6 +51,8 @@ def get_page_data():
             col = row_data.find_elements(By.TAG_NAME, "td")
             racer = RacerData()
             racer.import_data(col)
+            if not isCorrectEncoding(racer.name):
+                racer.name = "INCORRECT ENCODING"
             racersOnPage.append(racer)
 
     expandables = driver.find_elements(By.CLASS_NAME, "css-1j7qk7u")
@@ -73,12 +82,16 @@ def get_page_data():
     return racerToCsv
 
 
-for p in range(1, numOfPages):
+p = 1
+lastTime = "99:99:99"
+while racingData[-1][-3] != "00:00:00":
     try:
         racingData.extend(get_page_data())
 
         driver.get(page(p+1))
         driver.implicitly_wait(1)
+        p += 1
+        lastTime = racingData[-1][-3]
     except:
         break
 
