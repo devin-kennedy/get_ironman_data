@@ -1,12 +1,10 @@
 import selenium.common.exceptions
-from bs4 import BeautifulSoup
-import requests
 import csv
+import requests
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from RacerData import RacerData
-import math
 
 driver = webdriver.Firefox()
 resPerPage = 9
